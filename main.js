@@ -7,7 +7,7 @@ const SocketServer = require('ws').Server;
 
 const PORT = process.env.PORT || 9487;
 
-var playerList = {
+const playerList = global.playerList = {
     player: [],
     wait: [],
     party: []
@@ -67,7 +67,7 @@ wss.on("connection", (ws) => {
                 var pls = [...playerList.wait];
                 pls.splice(pls.indexOf(ID), 1);
 
-                var anotherPlayer = playerList.wait[Math.floor(Math.random() * playerList.wait.length)];
+                var anotherPlayer = pls[Math.floor(Math.random() * pls.length)];
                 playerList.wait.splice(playerList.wait.findIndex(e => e.id === ID), 1);
                 playerList.wait.splice(playerList.wait.findIndex(e => e.id === anotherPlayer), 1);
 
@@ -86,7 +86,7 @@ wss.on("connection", (ws) => {
                 ws.send(encode(data));
                 playerList.player.find(e => e.id === anotherPlayer).ws.send(encode(data));
 
-                playerList.party.find(e => e.roomID === roomID).game = await runGame(playerList.player.find(e => e.id === ID), playerList.player.find(e => e.id === anotherPlayer));
+                playerList.party.find(e => e.roomID === roomID).game = await runGame(playerList.player.find(e => e.id === ID), playerList.player.find(e => e.id === anotherPlayer), roomID);
                 break;
             
             case "keydown":

@@ -8,16 +8,62 @@
         <script src="./web/ball.js"></script>
         <script src="./web/table.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/msgpack-lite/0.1.26/msgpack.min.js" integrity="sha512-harMiusNxs02ryf3eqc3iQalz2RSd0z38vzOyuFwvQyW046h2m+/47WiDmPW9soh/p71WQMRSkhSynEww3/bOA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;900&display=swap" rel="stylesheet">
         <style>
             * {
                 padding: 0;
                 margin: 0;
                 overflow: hidden;
+                font-family: 'Noto Sans TC', sans-serif;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background-color: #000;
+                color: #fff;
+                height: 100vh;
+                width: 100vw;
+            }
+            #gameplay {
+                max-width: calc(100vw - 10px);
+                max-height: calc(100vh - 10px);
+                border: 1px #fff solid;
+                border-radius: 15px;
+                margin: 5px;
+            }
+            #msgBox {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background-color: #ffffff65;
+                font-weight: 900;
+                color: #fff;
+            }
+            #msgBox span {
+                color: #000;
+                background-color: #ffffffa8;
+                line-height: 5em;
+                padding: 0.5em;
+                font-size: 3em;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
         </style>
     </head>
     <body>
-        <canvas id="gameplay" style="height: 100vh;width: 100vw;" height="1080" width="1920"></canvas>
+        <div id="msgBox" style="display: none;"></div>
+        <canvas id="gameplay" height="1080" width="1920"></canvas>
         <span id="ping"></span>
     </body>
     <script>
@@ -38,8 +84,37 @@
             }));
         }
 
+        function fadeOutEffect(query) {
+            return new Promise(resolve => {
+                var fadeTarget = document.querySelector(query);
+                var fadeEffect = setInterval(() => {
+                    if (!fadeTarget.style.opacity) {
+                        fadeTarget.style.opacity = 1;
+                    }
+                    if (fadeTarget.style.opacity > 0) {
+                        fadeTarget.style.opacity -= 0.01;
+                    } else {
+                        clearInterval(fadeEffect);
+                        fadeTarget.style.display = 'none';
+                        fadeTarget.style.opacity = 1;
+                        resolve();
+                    }
+                }, 5);
+            });
+        }
+
+        function createMsgBox(message) {
+            var msgBox = document.getElementById('msgBox');
+            msgBox.innerHTML = `<span>${message}</span>`;
+            msgBox.style.display = 'flex';
+            setTimeout(async () => {
+                await fadeOutEffect('#msgBox');
+            }, 2000);
+        }
+
         function drawMiddleLine() {
             game.beginPath();
+            game.strokeStyle = '#fff';
             game.moveTo(gameDisplay.width/2, 0);
             game.lineTo(gameDisplay.width/2, gameDisplay.height);
             game.stroke();
@@ -57,19 +132,19 @@
 
             window.player1 = new Table(150, "#4287f5", 12, 150, 390, 1080, 1920);
             window.player2 = new Table(150, "#89c206", 12, 1770, 390, 1080, 1920);
-            window.ball = new Ball(15, "#000", 5, 960, 540, 1080, 1920);
+            window.ball = new Ball(15, "#fff", 5, 960, 540, 1080, 1920);
         }
 
         function render(dt) {
             game.clearRect(0, 0, gameDisplay.width, gameDisplay.height);
 
             if (window.player == 0) {
-                game.font = "3em Arial";
-                game.fillStyle = "#000";
+                game.font = "3em 'Noto Sans TC'";
+                game.fillStyle = "#fff";
                 game.fillText("Your Aera", 400, 1000);
             } else {
-                game.font = "3em Arial";
-                game.fillStyle = "#000";
+                game.font = "3em 'Noto Sans TC'";
+                game.fillStyle = "#fff";
                 game.fillText("Your Aera", 1360, 1000);
             }
 
@@ -99,12 +174,24 @@
                     break;
 
                 case "status":
-                    if (dt.value === 0) console.log("Game starts in 3 seconds");
+                    if (dt.value === 0) {
+                        createMsgBox("Game Will Starts in 3 Seconds");
+                        render(dt);
+                    }
+                    break;
+
+                case "gameOver":
+                    if (dt.value === window.userID) {
+                        createMsgBox("You Win");
+                    } else {
+                        createMsgBox("You Lose");
+                    }
+                    window.gameStart = false;
                     break;
                 
                 case "pong":
                     document.getElementById('ping').innerHTML = `Ping: ${delay}ms`;
-                    // setTimeout(ping(), 200);
+                    // setTimeout(ping(), 500);
                     break;
             }
         }
@@ -138,6 +225,7 @@
             }
 
             document.onkeyup = () => {
+                if (!window.gameStart) return;
                 ws.send(msgpack.encode({
                     name: "keyup"
                 }));
