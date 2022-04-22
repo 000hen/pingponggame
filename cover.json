@@ -13,6 +13,9 @@
         {
             "name": "keydown",
             "value": 1
+        },
+        {
+            "name": "keyup"
         }
     ],
     "r": [

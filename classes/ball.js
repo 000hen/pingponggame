@@ -13,6 +13,24 @@ class Ball {
         this.speedX = this._ballSpeed / Math.sqrt(2);
         this.speedY = this._ballSpeed / Math.sqrt(2);
 
+        if (Math.random() * 10 > 5) {
+            if (Math.random() * 10 > 5) {
+                this.speedX = -this.speedX;
+                this.speedY = -this.speedY;
+            } else {
+                this.speedX = this.speedX;
+                this.speedY = -this.speedY;
+            }
+        } else {
+            if (Math.random() * 10 > 5) {
+                this.speedX = -this.speedX;
+                this.speedY = this.speedY;
+            } else {
+                this.speedX = this.speedX;
+                this.speedY = this.speedY;
+            }
+        }
+
         this.info = {
             width: this._defaultDisplayWidth,
             height: this._defaultDisplayHeight
@@ -49,9 +67,9 @@ class Ball {
         if (this._isDead) return;
 
         if (this.x >= this.info.width - this._ballSize || this.x <= this._ballSize) {
-            this.speedX = -this.speedX;
-            // this._isDead = true;
-            // this.emit("gameOver", "lol")
+            // this.speedX = -this.speedX;
+            this._isDead = true;
+            this.emit("gameOver", "lol")
         }
         if (this.y >= this.info.height - this._ballSize || this.y <= this._ballSize) {
             this.speedY = -this.speedY + Math.random() * 1.3;

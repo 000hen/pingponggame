@@ -13,24 +13,6 @@ class Ball {
         this.speedX = this._ballSpeed / Math.sqrt(2);
         this.speedY = this._ballSpeed / Math.sqrt(2);
 
-        if (Math.random() * 10 > 5) {
-            if (Math.random() * 10 > 5) {
-                this.speedX = -this.speedX;
-                this.speedY = -this.speedY;
-            } else {
-                this.speedX = this.speedX;
-                this.speedY = -this.speedY;
-            }
-        } else {
-            if (Math.random() * 10 > 5) {
-                this.speedX = -this.speedX;
-                this.speedY = this.speedY;
-            } else {
-                this.speedX = this.speedX;
-                this.speedY = this.speedY;
-            }
-        }
-
         this.gameDisplay = document.getElementById('gameplay');
         this.game = this.gameDisplay.getContext('2d');
 

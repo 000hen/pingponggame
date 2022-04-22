@@ -17,7 +17,7 @@
         </style>
     </head>
     <body>
-        <canvas id="gameplay" style="height: auto;width: 100vw;" height="1080" width="1920"></canvas>
+        <canvas id="gameplay" style="height: 100vh;width: 100vw;" height="1080" width="1920"></canvas>
         <span id="ping"></span>
     </body>
     <script>
@@ -38,6 +38,48 @@
             }));
         }
 
+        function drawMiddleLine() {
+            game.beginPath();
+            game.moveTo(gameDisplay.width/2, 0);
+            game.lineTo(gameDisplay.width/2, gameDisplay.height);
+            game.stroke();
+        }
+
+        function createObject(dt) {
+            window.player1ID = dt.data[0];
+            window.player2ID = dt.data[1];
+
+            if (window.userID == window.player1ID) {
+                window.player = 0;
+            } else {
+                window.player = 1;
+            }
+
+            window.player1 = new Table(150, "#4287f5", 12, 150, 390, 1080, 1920);
+            window.player2 = new Table(150, "#89c206", 12, 1770, 390, 1080, 1920);
+            window.ball = new Ball(15, "#000", 5, 960, 540, 1080, 1920);
+        }
+
+        function render(dt) {
+            game.clearRect(0, 0, gameDisplay.width, gameDisplay.height);
+
+            if (window.player == 0) {
+                game.font = "3em Arial";
+                game.fillStyle = "#000";
+                game.fillText("Your Aera", 400, 1000);
+            } else {
+                game.font = "3em Arial";
+                game.fillStyle = "#000";
+                game.fillText("Your Aera", 1360, 1000);
+            }
+
+            drawMiddleLine();
+
+            window.player1.move(dt.data[player1ID].x, dt.data[player1ID].y);
+            window.player2.move(dt.data[player2ID].x, dt.data[player2ID].y);
+            window.ball.move(dt.data["ball"].x, dt.data["ball"].y);
+        }
+
         const ws = new WebSocket(`ws://${location.host}`);
 
         ws.onmessage = async (msg) => {
@@ -48,31 +90,22 @@
                     break;
 
                 case "gameStart":
-                    window.player1ID = dt.data[0];
-                    window.player2ID = dt.data[1];
-
-                    window.player1 = new Table(150, "#4287f5", 12, 150, 150, 1080, 1920);
-                    window.player2 = new Table(150, "#89c206", 12, 1770, 150, 1080, 1920);
-                    window.ball = new Ball(15, "#000", 5, 960, 540, 1080, 1920);
-
+                    createObject(dt);
                     break;
 
                 case "gameStatus":
-                    game.clearRect(0, 0, gameDisplay.width, gameDisplay.height);
-                    window.player1.move(dt.data[player1ID].x, dt.data[player1ID].y);
-                    window.player2.move(dt.data[player2ID].x, dt.data[player2ID].y);
-                    window.ball.move(dt.data["ball"].x, dt.data["ball"].y);
-                    
-                    // if (isMove) {
-                    //     table.moveWay = curDirection;
-                    //     table.move();
-                    // } else table.draw();
+                    window.gameStart = true;
+                    render(dt);
+                    break;
+
+                case "status":
+                    if (dt.value === 0) console.log("Game starts in 3 seconds");
                     break;
                 
                 case "pong":
                     document.getElementById('ping').innerHTML = `Ping: ${delay}ms`;
-                    setTimeout(ping(), 200);
-                    
+                    // setTimeout(ping(), 200);
+                    break;
             }
         }
 
@@ -87,22 +120,27 @@
             ws.send(msgpack.encode({name:"start"}));
 
             document.onkeydown = (e) => {
-                // let curDir = mySnake.getCurDirection();
+                if (!window.gameStart) return;
                 switch (e.key) {
                     case "ArrowUp":
-                        isMove = true;
-                        curDirection = 0;
+                        ws.send(msgpack.encode({
+                            name: "keydown",
+                            value: 0
+                        }));
                         break;
                     case "ArrowDown":
-                        isMove = true;
-                        curDirection = 1;
+                        ws.send(msgpack.encode({
+                            name: "keydown",
+                            value: 1
+                        }));
                         break;
                 }
             }
 
             document.onkeyup = () => {
-                isMove = false;
-                curDirection = null;
+                ws.send(msgpack.encode({
+                    name: "keyup"
+                }));
             }
 
         });

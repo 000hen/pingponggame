@@ -55,7 +55,7 @@ wss.on("connection", (ws) => {
                 playerList.wait.push(ID);
 
                 function a() {
-                    return new Promise((rs,rj) => {
+                    return new Promise((rs, rj) => {
                         if (playerList.wait.length > 1) {
                             return rs(true);
                         }
@@ -63,6 +63,9 @@ wss.on("connection", (ws) => {
                     })
                 }
                 await a();
+
+                var pls = [...playerList.wait];
+                pls.splice(pls.indexOf(ID), 1);
 
                 var anotherPlayer = playerList.wait[Math.floor(Math.random() * playerList.wait.length)];
                 playerList.wait.splice(playerList.wait.findIndex(e => e.id === ID), 1);
@@ -83,7 +86,29 @@ wss.on("connection", (ws) => {
                 ws.send(encode(data));
                 playerList.player.find(e => e.id === anotherPlayer).ws.send(encode(data));
 
-                runGame(playerList.player.find(e => e.id === ID), playerList.player.find(e => e.id === anotherPlayer))
+                playerList.party.find(e => e.roomID === roomID).game = await runGame(playerList.player.find(e => e.id === ID), playerList.player.find(e => e.id === anotherPlayer));
+                break;
+            
+            case "keydown":
+                var party = playerList.party.find(e => e.data.includes(ID));
+                if (!party) return;
+                if (party.data.findIndex(e => e === ID) === 0) {
+                    party.game.player1.moveWay = data.value;
+                    party.game.moveStatus.player1 = true;
+                } else {
+                    party.game.player2.moveWay = data.value;
+                    party.game.moveStatus.player2 = true;
+                }
+                break;
+            
+            case "keyup":
+                var party = playerList.party.find(e => e.data.includes(ID));
+                if (!party) return;
+                if (party.data.findIndex(e => e === ID) === 0) {
+                    party.game.moveStatus.player1 = false;
+                } else {
+                    party.game.moveStatus.player2 = false;
+                }
                 break;
             
             case "ping":

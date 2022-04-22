@@ -61,13 +61,6 @@ class Table {
     }
 
     move() {
-        // if (this._isDead) return;
-
-        // if (this.x >= this.info.width - this._tableSize || this.x <= this._tableSize) {
-        //     this.speedX = -this.speedX;
-        //     this._isDead = true;
-        //     this.emit("gameOver", "lol")
-        // }
         if (this.y + this._tableSize.y > this.info.height || this.y < 0) {
             if (this.y < 0) {
                 this.y += 1;
