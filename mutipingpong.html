@@ -141,11 +141,11 @@
             if (window.player == 0) {
                 game.font = "3em 'Noto Sans TC'";
                 game.fillStyle = "#fff";
-                game.fillText("Your Aera", 400, 1000);
+                game.fillText("Your Area", 400, 1000);
             } else {
                 game.font = "3em 'Noto Sans TC'";
                 game.fillStyle = "#fff";
-                game.fillText("Your Aera", 1360, 1000);
+                game.fillText("Your Area", 1360, 1000);
             }
 
             drawMiddleLine();
@@ -191,7 +191,7 @@
                 
                 case "pong":
                     document.getElementById('ping').innerHTML = `Ping: ${delay}ms`;
-                    // setTimeout(ping(), 500);
+                    setTimeout(ping(), 500);
                     break;
             }
         }
@@ -202,9 +202,11 @@
 
         window.addEventListener("load", () => {
 
-            ping();
+            ws.onopen = () => {
+                ping();
 
-            ws.send(msgpack.encode({name:"start"}));
+                ws.send(msgpack.encode({name:"start"}));
+            }
 
             document.onkeydown = (e) => {
                 if (!window.gameStart) return;
