@@ -1,0 +1,65 @@
+{
+    "d": [
+        {
+            "name": "start"
+        },
+        {
+            "name": "stop"
+        },
+        {
+            "name": "keydown",
+            "value": 0
+        },
+        {
+            "name": "keydown",
+            "value": 1
+        }
+    ],
+    "r": [
+        {
+            "name": "userID",
+            "value": "(UUIDv4)"
+        },
+        {
+            "name": "status",
+            "value": 0
+        },
+        {
+            "name": "gameStart",
+            "data": [
+                "(UUIDv4)#1",
+                "(UUIDv4)#2"
+            ]
+        },
+        {
+            "name": "gameStatus",
+            "data": {
+                "(UUIDv4)#1": {
+                    "x": 0,
+                    "y": 0
+                },
+                "(UUIDv4)#2": {
+                    "x": 0,
+                    "y": 0
+                },
+                "ball": {
+                    "x": 0,
+                    "y": 0
+                }
+            }
+        },
+        {
+            "name": "gameWin",
+            "value": "(UUIDv4)"
+        }
+    ],
+    "v": [
+        {
+            "room": "(UUIDv4)",
+            "player": [
+                "(UUIDv4)#1",
+                "(UUIDv4)#2"
+            ]
+        }
+    ]
+}

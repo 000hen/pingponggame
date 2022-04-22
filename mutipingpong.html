@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script src="./web/ball.js"></script>
+        <script src="./web/table.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/msgpack-lite/0.1.26/msgpack.min.js" integrity="sha512-harMiusNxs02ryf3eqc3iQalz2RSd0z38vzOyuFwvQyW046h2m+/47WiDmPW9soh/p71WQMRSkhSynEww3/bOA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="gameplay" style="height: auto;width: 100vw;" height="1080" width="1920"></canvas>
+        <span id="ping"></span>
+    </body>
+    <script>
+        const gameDisplay = document.getElementById('gameplay');
+        const game = gameDisplay.getContext('2d');
+
+        var delay = 0;
+
+        function getRandom(min,max){
+            return Math.floor(Math.random()*(max-min+1))+min;
+        };
+
+        function ping() {
+            delay = 0;
+            ws.send(msgpack.encode({
+                name: "ping",
+                timeStamp: Date.now()
+            }));
+        }
+
+        const ws = new WebSocket(`ws://${location.host}`);
+
+        ws.onmessage = async (msg) => {
+            var dt = msgpack.decode(new Uint8Array(await msg.data.arrayBuffer()));
+            switch (dt.name) {
+                case "userID":
+                    window.userID = dt.value;
+                    break;
+
+                case "gameStart":
+                    window.player1ID = dt.data[0];
+                    window.player2ID = dt.data[1];
+
+                    window.player1 = new Table(150, "#4287f5", 12, 150, 150, 1080, 1920);
+                    window.player2 = new Table(150, "#89c206", 12, 1770, 150, 1080, 1920);
+                    window.ball = new Ball(15, "#000", 5, 960, 540, 1080, 1920);
+
+                    break;
+
+                case "gameStatus":
+                    game.clearRect(0, 0, gameDisplay.width, gameDisplay.height);
+                    window.player1.move(dt.data[player1ID].x, dt.data[player1ID].y);
+                    window.player2.move(dt.data[player2ID].x, dt.data[player2ID].y);
+                    window.ball.move(dt.data["ball"].x, dt.data["ball"].y);
+                    
+                    // if (isMove) {
+                    //     table.moveWay = curDirection;
+                    //     table.move();
+                    // } else table.draw();
+                    break;
+                
+                case "pong":
+                    document.getElementById('ping').innerHTML = `Ping: ${delay}ms`;
+                    setTimeout(ping(), 200);
+                    
+            }
+        }
+
+        setInterval(() => {
+            delay++;
+        }, 1);
+
+        window.addEventListener("load", () => {
+
+            ping();
+
+            ws.send(msgpack.encode({name:"start"}));
+
+            document.onkeydown = (e) => {
+                // let curDir = mySnake.getCurDirection();
+                switch (e.key) {
+                    case "ArrowUp":
+                        isMove = true;
+                        curDirection = 0;
+                        break;
+                    case "ArrowDown":
+                        isMove = true;
+                        curDirection = 1;
+                        break;
+                }
+            }
+
+            document.onkeyup = () => {
+                isMove = false;
+                curDirection = null;
+            }
+
+        });
+    </script>
+</html>
