@@ -70,14 +70,11 @@
         const gameDisplay = document.getElementById('gameplay');
         const game = gameDisplay.getContext('2d');
 
-        var delay = 0;
-
         function getRandom(min,max){
             return Math.floor(Math.random()*(max-min+1))+min;
         };
 
         function ping() {
-            delay = 0;
             ws.send(msgpack.encode({
                 name: "ping",
                 timeStamp: Date.now()
@@ -194,8 +191,21 @@
                     break;
                 
                 case "pong":
+                    var delay = Date.now() - dt.value;
+                    if (delay > 100 && delay < 200) {
+                        document.getElementById("ping").style.color = "#ebaf23";
+                    } else if (delay >= 200 && delay < 500) {
+                        document.getElementById("ping").style.color = "#eb5c23";
+                    } else if (delay >= 500 && delay < 1000) {
+                        document.getElementById("ping").style.color = "#eb2323";
+                    } else if (delay >= 1000) {
+                        document.getElementById("ping").style.color = "#eb2323";
+                        createMsgBox(`You cannot play with high latency!`, false);
+                    } else {
+                        document.getElementById("ping").style.color = "#fff";
+                    }
                     document.getElementById('ping').innerHTML = `Ping: ${delay}ms`;
-                    setTimeout(ping(), 500);
+                    setTimeout(() => ping(), 500);
                     break;
             }
         }
@@ -206,10 +216,6 @@
             ws.send(msgpack.encode({name:"start"}));
             createMsgBox("Waiting for other player");
         }
-
-        setInterval(() => {
-            delay++;
-        }, 1);
 
         window.addEventListener("load", () => {
             document.onkeydown = (e) => {

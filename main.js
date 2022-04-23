@@ -113,7 +113,8 @@ wss.on("connection", (ws) => {
             
             case "ping":
                 ws.send(encode({
-                    name: "pong"
+                    name: "pong",
+                    value: data.timeStamp
                 }));
                 break;
         }
