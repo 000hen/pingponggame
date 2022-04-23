@@ -196,18 +196,18 @@
             }
         }
 
+        ws.onopen = () => {
+            ping();
+
+            ws.send(msgpack.encode({name:"start"}));
+            createMsgBox("Waiting for other player");
+        }
+
         setInterval(() => {
             delay++;
         }, 1);
 
         window.addEventListener("load", () => {
-
-            ws.onopen = () => {
-                ping();
-
-                ws.send(msgpack.encode({name:"start"}));
-            }
-
             document.onkeydown = (e) => {
                 if (!window.gameStart) return;
                 switch (e.key) {

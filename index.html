@@ -4,9 +4,102 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Main Page</title>
+        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+        <title>Ping Pong Game</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+                font-family: 'Noto Sans TC', sans-serif;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+            }
+            body div {
+                margin-bottom: 30px;
+            }
+            #pingpongTitle {
+                font-size: 3em;
+                font-weight: 900;
+                color: #fff;
+                background-color: #000;
+                padding: 0.5em;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #rule {
+                font-size: 1.5em;
+                font-weight: 900;
+                background-color: rgb(255, 251, 214);
+                border-radius: 15px;
+                width: 60%;
+                height: 150px;
+                padding: 15px;
+            }
+            button {
+                font-size: 1.5em;
+                font-weight: 900;
+                background-color: #000;
+                border-radius: 15px;
+                width: 200px;
+                height: 80px;
+                padding: 5px;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+            #socialOption {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 2.1em;
+            }
+            #socialOption a {
+                margin-right: 10px;
+                font-size: 2em;
+            }
+            a {
+                text-decoration: none;
+                color: unset;
+            }
+        </style>
     </head>
     <body>
-        <h1>Hello World</h1>
+        <div id="pingpongTitle">
+            <span id="pingTT"></span>
+        </div>
+        <div id="rule">
+            <p>
+                這是一個簡單的 連線乒乓球 遊戲，這個遊戲的規則很簡單，就是只要一方失誤(碰到那一方的牆)，遊戲即結束。
+            </p>
+        </div>
+        <div id="playButton">
+            <button id="playButton" onclick="location.href = '/multipingpong'">Play</button>
+        </div>
+        <div id="socialOption">
+            <a href="https://github.com/000hen/pingponggame"><i class="fab fa-github"></i></a>
+        </div>
     </body>
+    <script>
+        var typed = new Typed('#pingTT', {
+            strings: ["Ping Pong Game", "乒乓球遊戲"],
+            typeSpeed: 50,
+            backDelay: 2500,
+            backSpeed: 50,
+            loop: true
+        });
+    </script>
 </html>
