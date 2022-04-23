@@ -119,8 +119,8 @@ wss.on("connection", (ws) => {
         }
     });
     ws.on("close", () => {
-        delete playerList.player.find(e => e === ID);
-        delete playerList.wait.find(e => e === ID);
+        playerList.player.splice(playerList.player.findIndex(e => e === ID), 1);
+        playerList.wait.splice(playerList.wait.findIndex(e => e === ID), 1);
         console.log("Client disconnected");
     });
 })
