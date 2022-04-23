@@ -103,10 +103,11 @@
             });
         }
 
-        function createMsgBox(message) {
+        function createMsgBox(message, willClose = true) {
             var msgBox = document.getElementById('msgBox');
             msgBox.innerHTML = `<span>${message}</span>`;
             msgBox.style.display = 'flex';
+            if (!willClose) return msgBox;
             setTimeout(async () => {
                 await fadeOutEffect('#msgBox');
             }, 2000);
@@ -187,6 +188,9 @@
                         createMsgBox("You Lose");
                     }
                     window.gameStart = false;
+                    setTimeout(() => {
+                        confirm("Restart Game?") ? window.location.reload() : window.location.href = "/";
+                    }, 2000);
                     break;
                 
                 case "pong":
