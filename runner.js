@@ -3,10 +3,10 @@ async function runGame(player1D, player2D, roomID) {
     const { Table } = require("./classes/table.js");
     const { encode, decode } = require("msgpack-lite");
 
-    var player1 = new Table(150, "#000", 12, 150, 390, 1080, 1920);
-    var player2 = new Table(150, "#000", 12, 1770, 390, 1080, 1920);
+    var player1 = new Table(150, "#000", 15, 150, 390, 1080, 1920);
+    var player2 = new Table(150, "#000", 15, 1770, 390, 1080, 1920);
 
-    var ball = new Ball(15, "#000", 10, 960, 540, 1080, 1920, { player1, player2 });
+    var ball = new Ball(15, "#000", 20, 960, 540, 1080, 1920, { player1, player2 });
     var moveStatus = {
         player1: false,
         player2: false

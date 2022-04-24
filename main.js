@@ -53,19 +53,19 @@ wss.on("connection", (ws) => {
                 }
 
                 playerList.wait.push(ID);
+                var pls = [];
 
                 function a() {
                     return new Promise((rs, rj) => {
                         if (playerList.wait.length > 1) {
+                            pls = [...playerList.wait];
+                            pls.splice(pls.indexOf(ID), 1);
                             return rs(true);
                         }
                         setTimeout(async () => rs(await a()), 1000);
                     })
                 }
                 await a();
-
-                var pls = [...playerList.wait];
-                pls.splice(pls.indexOf(ID), 1);
 
                 var anotherPlayer = pls[Math.floor(Math.random() * pls.length)];
                 playerList.wait.splice(playerList.wait.findIndex(e => e.id === ID), 1);
