@@ -153,7 +153,7 @@
             window.ball.move(dt.data["ball"].x, dt.data["ball"].y);
         }
 
-        const ws = new WebSocket(`ws://${location.host}`);
+        const ws = new WebSocket(`//${location.host}`);
 
         ws.onmessage = async (msg) => {
             var dt = msgpack.decode(new Uint8Array(await msg.data.arrayBuffer()));
