@@ -64,11 +64,12 @@
     <body>
         <div id="msgBox" style="display: none;"></div>
         <canvas id="gameplay" height="1080" width="1920"></canvas>
-        <span id="ping"></span>
+        <span id="ping"></span> <span id="update"></span>
     </body>
     <script>
         const gameDisplay = document.getElementById('gameplay');
         const game = gameDisplay.getContext('2d');
+        var preTimestamp = 0;
 
         function getRandom(min,max){
             return Math.floor(Math.random()*(max-min+1))+min;
@@ -168,12 +169,15 @@
 
                 case "gameStatus":
                     window.gameStart = true;
+                    var serverUpdate = 1000 / (Date.now() - preTimestamp);
+                    // document.getElementById('update').innerHTML = `Update: ${serverUpdate.toFixed(2)}Hz`;
                     render(dt);
+                    preTimestamp = Date.now();
                     break;
 
                 case "status":
                     if (dt.value === 0) {
-                        createMsgBox("Game Will Starts in 3 Seconds");
+                        createMsgBox("Game Will Start in 3 Seconds");
                         render(dt);
                     }
                     break;
